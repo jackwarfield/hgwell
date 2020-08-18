@@ -3,7 +3,7 @@ import pandas as pd
 
 import sys
 # arguments
-# filename val_threshold pix_threshold gaia_window
+# filename val_threshold pix_threshold gaia_window(arcsec)
 filename = sys.argv[1]
 try:
     val_thr = float(sys.argv[2])
@@ -16,21 +16,23 @@ except:
 try:
     gaia_window = float(sys.argv[4])
 except:
-    gaia_window = 7.2
+    gaia_window = 1.0
 
 # open all SCI extensions into list, hold WCS info
 im_list, wcs_list = open_images (filename)
 
 x, y, v = [], [], []
+print ("\n")
 for i,im in enumerate(im_list):
-    print ("\n====================")
-    print ("Finding objects in " + im.name + " " + str(i+1) + ".")
+    print ("====================")
+    print ("Finding objects in " + im.name + " " + str(i+1) + " . . .")
     star_out = find_stars (im, val_thr, pix_thr)
     x += [star_out[0]]
     y += [star_out[1]]
     v += [star_out[2]]
-print ("====================")
 
+print ("====================")
+print ("Querying the Gaia archive via astroquery using object lists . . ."
 
 df_list = []
 for i,j,k in zip(x,y,v):
@@ -38,6 +40,9 @@ for i,j,k in zip(x,y,v):
 
 for df,wcs in zip(df_list, wcs_list):
     df['g'] = match_gaia (df, wcs, gaia_window)
+
+print ("====================")
+print ("Outputting tables and plots of Gaia matches!")
 
 for i in range(len(im_list)):
     testplot (im_list[i], df_list[i], 'SCI'+str(i+1)+'.png')
