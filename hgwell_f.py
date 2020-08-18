@@ -75,10 +75,14 @@ def match_gaia (df, wcs, gaia_window):
     return df.g
 
 def testplot (im, df, out):
+    """
+    fill in
+    """
     import matplotlib.pyplot as plt
-    fig = plt.figure (figsize=(20,10))
+    height, width = len(im.data), len(im.data[0])
+    fig = plt.figure (figsize=(20, 20*height/width))
     ax = fig.add_subplot (1,1,1)
-    ax.imshow (im.data, cmap='gray', vmin=0)
+    ax.imshow (im.data, cmap='gray', vmin=0, origin='lower')
     ax.scatter (df.x, df.y, s=20, color='none', edgecolor='red')
     ax.scatter (df[df.g.notna()].x, df[df.g.notna()].y, s=20, color='none', edgecolor='green')
     for x,y,z in zip(df[df.g.notna()].x, df[df.g.notna()].y, df[df.g.notna()].g):
