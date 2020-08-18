@@ -40,5 +40,5 @@ for df,wcs in zip(df_list, wcs_list):
     df['g'] = match_gaia (df, wcs, gaia_window)
 
 for i in range(len(im_list)):
-    testplot (im_list[i], df_list[i], 'SCI'+str(i)+'.png')
-    df_list[i].to_csv ('SCI'+str(i)+'.csv', index=False)
+    testplot (im_list[i], df_list[i], 'SCI'+str(i+1)+'.png')
+    df_list[i].to_csv ('SCI'+str(i+1)+'.csv', index=False)
