@@ -5,6 +5,7 @@ This script takes in a `fits` image, attempts to locate stars, and looks for <i>
 
 `python3 hgwell.py <image filename> <star brightness threshold> <pixel window size> <Gaia window size>`
 
-There is still much that needs to be improved!
-Things immediately being worked on:
-\[ ] better star-finding using PSF fit
+<br>
+There is still much that needs to be improved! <br>
+Things immediately being worked on: <br>
+- [] better star-finding using PSF fit
