@@ -6,7 +6,10 @@ import numpy as np
 
 def open_images (filename):
     """
-    Opens fits file under given filename, outputs list holding all "SCI" extensions and a list holding the WCS data for each extension.
+    Input
+        filename:           filename for fits image
+    Output
+        im_list, wcs_list:  lists holding the SCI extensions and astropy.wcs objects from fits file
     """
     hdu_list = fits.open (filename)
     im_list, wcs_list = [], []
@@ -18,7 +21,13 @@ def open_images (filename):
 
 def find_stars (im, val_thr, pix_thr):
     """
-    fill in
+    Input
+        im:         fits image extension
+        val_thr:    the minimum brightness to flag a pixel as a potential star
+        pix_thr:    the size of the window used to sweep over flagged pixels and combine them as singular stars
+    Output
+        x,y,v:      lists containing the x pixel position, y pixel position, and mean brightness across combined
+                    pixels for possible stars
     """
     data = im.data
     y_arr, x_arr, v_arr = [], [], []
@@ -60,7 +69,12 @@ def find_stars (im, val_thr, pix_thr):
 
 def match_gaia (df, wcs, gaia_window):
     """
-    fill in
+    Input
+        df:             Pandas DataFrame with 'x', 'y', and 'g' columns for positions of possible stars and Gaia designations
+        wcs:            astropy.wcs object for unit transformation from fits image pixel coordinates
+        gaia_window:    the size of the window (in arcsec) for the Gaia query 
+    Output
+        df.g:           Pandas series of Gaia designations
     """
     from astroquery.gaia import Gaia
     window = gaia_window * u.arcsec
@@ -77,7 +91,12 @@ def match_gaia (df, wcs, gaia_window):
 
 def testplot (im, df, out):
     """
-    fill in
+    Input
+        im:     fits image extension
+        df:     Pandas DataFrame with 'x', 'y', and 'g' columns for positions of possible stars and Gaia designations
+        out:    output filename
+    Output
+        void
     """
     import matplotlib.pyplot as plt
     height, width = len(im.data), len(im.data[0])
