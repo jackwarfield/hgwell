@@ -66,7 +66,8 @@ def match_gaia (df, wcs, gaia_window):
     window = gaia_window * u.arcsec
     for i in range(len(df)):
         x,y = df.loc[i,'x'],df.loc[i,'y'] 
-        coord = wcs.array_index_to_world (x,y)
+        ra,dec = wcs.pixel_to_world_values (x,y)
+        coord = SkyCoord (ra=ra, dec=dec, unit=(u.degree, u.degree), frame='icrs')
         r = Gaia.query_object_async (coordinate=coord, width=window, height=window)
         try:
             df.loc[i,'g'] = r['designation'][0].decode('utf-8')
