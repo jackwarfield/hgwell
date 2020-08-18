@@ -32,7 +32,7 @@ for i,im in enumerate(im_list):
     v += [star_out[2]]
 
 print ("====================")
-print ("Querying the Gaia archive via astroquery using object lists . . ."
+print ("Querying the Gaia archive via astroquery using object lists . . .")
 
 df_list = []
 for i,j,k in zip(x,y,v):
