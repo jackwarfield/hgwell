@@ -1,0 +1,4 @@
+*.fits
+*.csv
+*.png
+__pycache__
