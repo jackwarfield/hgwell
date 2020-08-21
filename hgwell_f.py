@@ -3,6 +3,7 @@ from astropy.wcs import WCS
 import astropy.units as u
 from astropy.coordinates import SkyCoord
 import numpy as np
+from astropy.time import Time
 
 def open_images (filename):
     """
@@ -10,14 +11,22 @@ def open_images (filename):
         filename:           filename for fits image
     Output
         im_list, wcs_list:  lists holding the SCI extensions and astropy.wcs objects from fits file
+        date:               decimal year of the observation from the primary header
     """
     hdu_list = fits.open (filename)
+    
+    # use the exposure start time (EXPSTART) to get the date of observation,
+    # convert to decimal year, used for EPOCH_PROP in the Gaia query later
+    date = hdu_list[0].header['expstart'] 
+    date = Time(date, format='mjd').decimalyear
+
     im_list, wcs_list = [], []
     for ext in hdu_list:
         if "SCI" in ext.name:
             im_list += [ext]
             wcs_list += [WCS(ext.header, hdu_list)] 
-    return im_list, wcs_list
+
+    return im_list, wcs_list, date
 
 def find_stars (im, val_thr, pix_thr):
     """

@@ -19,7 +19,7 @@ except:
     gaia_window = 1.0
 
 # open all SCI extensions into list, hold WCS info
-im_list, wcs_list = open_images (filename)
+im_list, wcs_list, date = open_images (filename)
 
 x, y, v = [], [], []
 print ("\n")
