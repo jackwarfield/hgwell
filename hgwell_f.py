@@ -109,10 +109,12 @@ def match_gaia (df, wcs, gaia_window, date):
         df:             Pandas DataFrame with 'x', 'y', 'g', 'ra_prop', 'dec_prop', 'pmra', 'pmdec', 'parallax'
     """
     from astroquery.gaia import Gaia
+    df['ra_pix'], df['dec_pix'] = np.nan, np.nan
     df['g'], df['ra_prop'], df['dec_prop'], df['pmra'], df['pmdec'], df['parallax'] = np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
     for i in range(len(df)):
         x,y = df.loc[i,'x'],df.loc[i,'y']
         ra,dec = wcs.pixel_to_world_values (x,y) 
+        df[i,'ra_pix'], df[i,'dec_pix'] = ra, dec
         print ('Looking at RA:%.5f, Dec:%.5f'%(ra,dec))
         query = """ SELECT TOP 1 designation, EPOCH_PROP(ASTROMETRIC_PARAMETERS(ra,dec,parallax,pmra,pmdec,radial_velocity), 2015.5, %f)
                     FROM gaiadr2.gaia_source
