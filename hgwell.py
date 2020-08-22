@@ -32,14 +32,16 @@ for i,im in enumerate(im_list):
     v += [star_out[2]]
 
 print ("====================")
-print ("Querying the Gaia archive via astroquery using object lists . . .")
+print ("Querying the Gaia archive via astroquery using list of %g objects . . ." %(len(x)))
 
 df_list = []
 for i,j,k in zip(x,y,v):
-    df_list += [pd.DataFrame(data = {'x':i, 'y':j, 'v':k, 'g':np.zeros(len(i))*np.nan})]
+    df_list += [pd.DataFrame(data = {'x':i, 'y':j, 'v':k})]
 
+# currently is very slow. will change to get all of the designation ids, and then
+# do the epoch_prop in a single query, which I think will speed everything up
 for df,wcs in zip(df_list, wcs_list):
-    df['g'] = match_gaia (df, wcs, gaia_window)
+    df = match_gaia (df, wcs, gaia_window, date)
 
 print ("====================")
 print ("Outputting tables and plots of Gaia matches!")
