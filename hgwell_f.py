@@ -76,28 +76,6 @@ def find_stars (im, val_thr, pix_thr):
 
     return x, y, v
 
-#def match_gaia (df, wcs, gaia_window):
-#    """
-#    Input
-#        df:             Pandas DataFrame with 'x', 'y', and 'g' columns for positions of possible stars and Gaia designations
-#        wcs:            astropy.wcs object for unit transformation from fits image pixel coordinates
-#        gaia_window:    the size of the window (in arcsec) for the Gaia query 
-#    Output
-#        df.g:           Pandas series of Gaia designations
-#    """
-#    from astroquery.gaia import Gaia
-#    window = gaia_window * u.arcsec
-#    for i in range(len(df)):
-#        x,y = df.loc[i,'x'],df.loc[i,'y'] 
-#        ra,dec = wcs.pixel_to_world_values (x,y)
-#        coord = SkyCoord (ra=ra, dec=dec, unit=(u.degree, u.degree), frame='icrs')
-#        r = Gaia.query_object_async (coordinate=coord, width=window, height=window)
-#        try:
-#            df.loc[i,'g'] = r['designation'][0].decode('utf-8')
-#        except:
-#            pass
-#    return df.g
-
 def match_gaia (df, wcs, gaia_window, date):
     """
     Input
@@ -109,12 +87,15 @@ def match_gaia (df, wcs, gaia_window, date):
         df:             Pandas DataFrame with 'x', 'y', 'g', 'ra_prop', 'dec_prop', 'pmra', 'pmdec', 'parallax'
     """
     from astroquery.gaia import Gaia
-    df['ra_pix'], df['dec_pix'] = np.nan, np.nan
-    df['g'], df['ra_prop'], df['dec_prop'], df['pmra'], df['pmdec'], df['parallax'] = np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
+    gaia_window = gaia_window / 3600.0
+    empty = np.zeros(len(df))*np.nan
+    df['ra_pix'], df['dec_pix'] = empty, empty
+    df['g'], df['ra_prop'], df['dec_prop'], df['pmra'], df['pmdec'], df['parallax'] = empty, empty, empty, empty, empty, empty
     for i in range(len(df)):
         x,y = df.loc[i,'x'],df.loc[i,'y']
         ra,dec = wcs.pixel_to_world_values (x,y) 
-        df[i,'ra_pix'], df[i,'dec_pix'] = ra, dec
+        ra,dec = float(ra),float(dec)
+        df.loc[i,'ra_pix'], df.loc[i,'dec_pix'] = ra, dec
         print ('Looking at RA:%.5f, Dec:%.5f'%(ra,dec))
         query = """ SELECT TOP 1 designation, EPOCH_PROP(ASTROMETRIC_PARAMETERS(ra,dec,parallax,pmra,pmdec,radial_velocity), 2015.5, %f)
                     FROM gaiadr2.gaia_source
@@ -134,6 +115,7 @@ def match_gaia (df, wcs, gaia_window, date):
             df.loc[i,'pmdec'] = r['epoch_prop'][0][4]
         except:
             pass
+        del(job,r)
     return df
 
 def testplot (im, df, out):
